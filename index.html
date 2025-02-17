@@ -60,17 +60,27 @@
           "description": "Founder & AI Researcher developing Causal AI for Precision Medicine. Transforming healthcare through explainable AI."
         }
     </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7H4XW6ZTTQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-7H4XW6ZTTQ');
+    </script>
 </head>
 
 <body>
     <canvas id="staticCanvas"></canvas>
     <header>
         <h1>Alan Millan</h1>
-        <h2 class="intro">FOUNDER AND ENGINEER FOCUSED ON CAUSAL DISCOVERY IN HEALTHCARE. SHIFTING MEDICINE FROM PROLONGING ILLNESS TO ERADICATING IT ALTOGETHER.</h2>
+        <h2 class="intro">FOUNDER AND ENGINEER FOCUSED ON CAUSAL DISCOVERY IN HEALTHCARE. SHIFTING MEDICINE FROM
+            PROLONGING ILLNESS TO ERADICATING IT ALTOGETHER.</h2>
 
         <nav>
             <a href="https://millan.ai/reflections.html">REFLECTIONS</a>
-            <a id="contact-btn" href="https://mqpncx10wd9.typeform.com/to/SwXdPhZ4" target="_blank" rel="noopener noreferrer">REACH OUT</a>
+            <a id="contact-btn" href="https://mqpncx10wd9.typeform.com/to/SwXdPhZ4" target="_blank"
+                rel="noopener noreferrer">REACH OUT</a>
         </nav>
     </header>
 
@@ -103,8 +113,7 @@
 
             </div>
             <div class="socials">
-                <a href="https://www.linkedin.com/in/amillanv" target="_blank"
-                    class="section-text social">LINKEDIN</a>
+                <a href="https://www.linkedin.com/in/amillanv" target="_blank" class="section-text social">LINKEDIN</a>
                 <a href="https://twitter.com/AlanMillanViv" target="_blank" class="section-text social">X</a>
                 <a href="https://www.instagram.com/alan.millan.v" target="_blank"
                     class="section-text social">INSTAGRAM</a>
@@ -128,7 +137,7 @@
         function generateStatic() {
             const imageData = ctx.createImageData(canvas.width, canvas.height);
             const buffer = imageData.data;
-            
+
             for (let i = 0; i < buffer.length; i += 4) {
                 const color = Math.random() * 24; // Random grayscale value
                 buffer[i] = color;      // R
@@ -136,7 +145,7 @@
                 buffer[i + 2] = color;  // B
                 buffer[i + 3] = 255;    // Alpha
             }
-            
+
             ctx.putImageData(imageData, 0, 0);
         }
 

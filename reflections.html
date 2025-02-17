@@ -47,7 +47,14 @@
 
     <!-- Robots Meta (Ensures Google Indexing) -->
     <meta name="robots" content="index, follow">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7H4XW6ZTTQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
+        gtag('config', 'G-7H4XW6ZTTQ');
+    </script>
 </head>
 
 <body>
@@ -56,7 +63,8 @@
         <div class="filter-buttons" id="filters">
             <button onclick="filterThoughts('all')" class="active">All</button>
         </div>
-        <a id="contact-btn" style="text-decoration: none;" href="https://mqpncx10wd9.typeform.com/to/SwXdPhZ4" target="_blank" rel="noopener noreferrer">REACH OUT</a>
+        <a id="contact-btn" style="text-decoration: none;" href="https://mqpncx10wd9.typeform.com/to/SwXdPhZ4"
+            target="_blank" rel="noopener noreferrer">REACH OUT</a>
     </header>
     <main>
         <div class="thoughts-container" id="thoughts"></div>
