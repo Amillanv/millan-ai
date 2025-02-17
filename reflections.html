@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page Title (Appears in Google Search) -->
+    <title>Reflections – Thoughts on all</title>
+
+    <!-- Meta Description (Essential for SEO) -->
+    <meta name="description"
+        content="A collection of thoughts and reflections on Causal AI, precision medicine, healthcare, and systems thinking. Insights by Alan Millan.">
+
+    <!-- Keywords (Google doesn’t use this much, but Bing does) -->
+    <meta name="keywords"
+        content="Causal AI, Precision Medicine, Healthcare AI, Systems Thinking, AI Research, Alan Millan Thoughts, Health Innovation">
+
+    <!-- Author -->
+    <meta name="author" content="Alan Millan">
+
+    <!-- Open Graph (For Facebook, LinkedIn) -->
+    <meta property="og:title" content="Reflections – Thoughts on Causal AI, Health, and Systems">
+    <meta property="og:description"
+        content="A collection of thoughts and reflections on Causal AI, precision medicine, healthcare, and systems thinking. Insights by Alan Millan.">
+    <meta property="og:image" content="https://yourwebsite.com/static/meta-image.jpg">
+    <!-- Change this to a preview image -->
+    <meta property="og:url" content="https://yourwebsite.com/reflections">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card (For X/Twitter Previews) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Reflections – Thoughts on Causal AI, Health, and Systems">
+    <meta name="twitter:description"
+        content="A collection of thoughts and reflections on Causal AI, precision medicine, healthcare, and systems thinking.">
+    <meta name="twitter:image" content="https://yourwebsite.com/static/meta-image.jpg">
+    <meta name="twitter:site" content="@yourTwitterHandle"> <!-- Change to your actual Twitter handle -->
+
+    <!-- Canonical URL (Avoids Duplicate Content Issues) -->
+    <link rel="canonical" href="https://yourwebsite.com/reflections">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://yourwebsite.com/static/favicon.ico" type="image/x-icon">
+
+    <!-- Styles (Optional, for SEO Performance Optimization) -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Google Search Console Verification (for faster indexing) -->
+    <meta name="google-site-verification" content="your-verification-code"> <!-- Get this from Google Search Console -->
+
+    <!-- Robots Meta (Ensures Google Indexing) -->
+    <meta name="robots" content="index, follow">
+
+</head>
+
+<body>
+    <header>
+        <h1>AMV</h1>
+        <div class="filter-buttons" id="filters">
+            <button onclick="filterThoughts('all')" class="active">All</button>
+        </div>
+        <button id="contact-btn">REACH OUT</button>
+    </header>
+    <main>
+        <div class="thoughts-container" id="thoughts"></div>
+    </main>
+
+    <script>
+        async function fetchThoughts() {
+            const sheetURL = "https://docs.google.com/spreadsheets/d/1IqFT5HtFARSTw8UPof4b0HU2EHPAKlMOXd3NZBqyL8M/gviz/tq?tqx=out:json";
+            try {
+                const response = await fetch(sheetURL);
+                const text = await response.text();
+                const jsonData = JSON.parse(text.substring(47, text.length - 2)); // Clean the Google Sheets JSON wrap
+
+                const rows = jsonData.table.rows;
+
+                let thoughtsArray = rows.map(row => {
+                    return {
+                        category: row.c[0]?.v || "Uncategorized", // First column (Category)
+                        thought: row.c[1]?.v || "No text available", // Second column (Thought)
+                        timestamp: row.c[2]?.v || "Unknown Date", // Third column (Timestamp)
+                        image: row.c[3]?.v || null // Fourth column (Image)
+                    };
+                });
+
+                // Sort by timestamp (Newest to Oldest)
+                thoughtsArray.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                displayThoughts(thoughtsArray);
+                generateFilterButtons(thoughtsArray);
+            } catch (error) {
+                console.error("Error fetching thoughts:", error);
+            }
+        }
+
+        function displayThoughts(thoughts) {
+            const container = document.getElementById("thoughts");
+            container.innerHTML = ""; // Clear previous entries
+
+            thoughts.forEach((thought, index) => {
+                const thoughtDiv = document.createElement("div");
+                thoughtDiv.className = "thought";
+                thoughtDiv.style.animationDelay = `${index * 0.1}s`; // Staggered fade-in effect
+                thoughtDiv.setAttribute("data-category", thought.category); // Add category attribute
+                thoughtDiv.setAttribute("data-date", formatDate(thought.timestamp));
+
+                // Dot
+                const dot = document.createElement("div");
+                dot.className = "dot";
+                thoughtDiv.appendChild(dot);
+
+                // Label "THOUGHT"
+                const label = document.createElement("div");
+                label.className = "label";
+                label.textContent = "THOUGHT";
+                thoughtDiv.appendChild(label);
+
+                // Label Date
+                const date = document.createElement("div");
+                date.className = "date";
+                date.textContent = formatDate(thought.timestamp);
+                thoughtDiv.appendChild(date);
+
+                // Image (If Available)
+                if (thought.image) {
+                    const img = document.createElement("img");
+                    img.src = `img/${thought.image}`;
+                    img.alt = "Reflection Image";
+                    thoughtDiv.appendChild(img);
+                }
+
+                // Thought Text
+                const text = document.createElement("p");
+                text.className = "text";
+                text.textContent = thought.thought;
+                thoughtDiv.appendChild(text);
+
+                container.appendChild(thoughtDiv);
+            });
+        }
+
+        function generateFilterButtons(thoughts) {
+            const filtersContainer = document.getElementById("filters");
+            const uniqueCategories = [...new Set(thoughts.map(t => t.category))];
+
+            uniqueCategories.forEach(category => {
+                const button = document.createElement("button");
+                button.textContent = category;
+                button.onclick = () => filterThoughts(category);
+                filtersContainer.appendChild(button);
+            });
+        }
+
+        function filterThoughts(category) {
+            const thoughts = document.querySelectorAll(".thought");
+            const buttons = document.querySelectorAll(".filter-buttons button");
+
+            buttons.forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+
+            thoughts.forEach(thought => {
+                if (category === "all" || thought.getAttribute("data-category") === category) {
+                    thought.style.display = "block";
+                } else {
+                    thought.style.display = "none";
+                }
+            });
+        }
+
+        function formatDate(dateString) {
+            if (!dateString || dateString === "Unknown Date") return "Unknown Date";
+
+            let date;
+
+            // Google Sheets might return a timestamp in days since 1899
+            if (!isNaN(dateString)) {
+                date = new Date((dateString - 25569) * 86400 * 1000); // Convert Excel serial number to JS Date
+            } else {
+                date = new Date(dateString);
+            }
+
+            if (isNaN(date.getTime())) return "Invalid Date"; // Handle any failed conversions
+
+            return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+        }
+
+
+        fetchThoughts();
+    </script>
+
+</body>
+
+</html>
