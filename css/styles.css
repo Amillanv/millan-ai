@@ -29,6 +29,20 @@ header {
     z-index: 1000;
 }
 
+.reflections {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+    /* background: #0a0a0a; */
+    mix-blend-mode: difference;
+    z-index: 1000;
+}
+
 h1 {
     position: relative;
     margin: 0px;
@@ -60,6 +74,7 @@ nav a:hover {
 }
 
 .intro {
+    position: relative;
     color: #f9f9f9;
     font-size: 12px;
     font-weight: 200;
@@ -264,6 +279,7 @@ footer {
 .filter-buttons {
     margin-bottom: 20px;
 }
+
 .filter-buttons button {
     background: #000;
     color: #fff;
@@ -274,16 +290,24 @@ footer {
     font-size: 14px;
     border-radius: 5px;
 }
+
 .filter-buttons button.active {
     color: #ff6000;
 }
+
 .thoughts-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 15px;
+    gap: 15vh;
     padding: 20px;
+    padding-top: 150px;
+    height: fit-content;
+    max-height: 100vh;
+    overflow: hidden;
+    overflow-y: scroll;
 }
+
 .thought {
     background: transparent;
     max-width: 50%;
@@ -296,6 +320,7 @@ footer {
     flex-direction: column;
     align-items: flex-start;
 }
+
 .thought .dot {
     width: 8px;
     height: 8px;
@@ -303,6 +328,7 @@ footer {
     border-radius: 50%;
     margin-bottom: 8px;
 }
+
 .thought .label {
     margin: 0;
     font-size: 12px;
@@ -313,11 +339,13 @@ footer {
     color: white;
     margin-bottom: 5px;
 }
+
 .thought img {
     width: 100%;
     border-radius: 10px;
     margin-bottom: 15px;
 }
+
 .thought .date {
     margin: 0;
     font-size: 12px;
@@ -326,15 +354,73 @@ footer {
     line-height: 1.5;
     margin-bottom: 10px;
 }
+
 .thought .text {
-    text-indent:80px;
+    text-indent: 80px;
     margin: 0;
     font-size: 23px;
     font-weight: 200;
     color: white;
     line-height: 1.5;
 }
+
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media only screen and (max-width: 600px) {
+
+    .intro {
+        position: absolute;
+        top: 30dvh;
+        color: #f9f9f9;
+        font-size: 12px;
+        font-weight: 200;
+        line-height: 18px;
+        max-width: 85%;
+        margin: 0;
+        text-align: center;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    #about {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .section-text {
+        text-align: center;
+    }
+
+    .socials {
+        position: relative;
+        align-items: center;
+        justify-content: flex-start;
+        right: 0vw;
+    }
+
+    .thought {
+        max-width: 90%;
+    }
+
+    .thought .text {
+        font-size: 18px;
+    }
+
+    .filter-buttons {
+        position: absolute;
+        top: 6vh;
+    }
 }
