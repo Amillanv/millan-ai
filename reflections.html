@@ -85,7 +85,8 @@
                         category: row.c[0]?.v || "Uncategorized", // First column (Category)
                         thought: row.c[1]?.v || "No text available", // Second column (Thought)
                         timestamp: row.c[2]?.v || "Unknown Date", // Third column (Timestamp)
-                        image: row.c[3]?.v || null // Fourth column (Image)
+                        image: row.c[3]?.v || null, // Fourth column (Image)
+                        link: row.c[4]?.v || null // Fifth column (Link)
                     };
                 });
 
@@ -104,6 +105,7 @@
             container.innerHTML = ""; // Clear previous entries
 
             thoughts.forEach((thought, index) => {
+                console.log(thought);
                 const thoughtDiv = document.createElement("div");
                 thoughtDiv.className = "thought";
                 thoughtDiv.style.animationDelay = `${index * 0.1}s`; // Staggered fade-in effect
@@ -127,7 +129,18 @@
                 date.textContent = thought.category;
                 thoughtDiv.appendChild(date);
 
+                // Thought Text
+                const text = document.createElement("p");
+                text.className = "text";
+                text.textContent = thought.thought;
+                thoughtDiv.appendChild(text);
+
                 if (thought.image) {
+                    const imgContainer = document.createElement("a");
+                    if (thought.link) {
+                        imgContainer.href = thought.link;
+                    }
+
                     const img = document.createElement("img");
                     img.src = `${thought.image}`;
                     img.alt = "Reflection Image";
@@ -136,15 +149,12 @@
                     const randomWidth = Math.floor(Math.random() * (100 - 20 + 1)) + 20; // Generates a number between 40 and 100
                     img.style.width = `${randomWidth}%`;
 
-                    thoughtDiv.appendChild(img);
+                    imgContainer.appendChild(img);
+                    thoughtDiv.appendChild(imgContainer);
                 }
-                // Thought Text
-                const text = document.createElement("p");
-                text.className = "text";
-                text.textContent = thought.thought;
-                thoughtDiv.appendChild(text);
 
                 container.appendChild(thoughtDiv);
+                
             });
         }
 
