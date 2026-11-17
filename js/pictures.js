@@ -23,6 +23,7 @@
   const INTENT = 110;     // ms the pointer rests on a line before it counts, so passing over lines does nothing
   const LINGER = 380;     // ms off the pair's lines before the hero comes back, so crossing the gap between stanzas is free
   const STAGGER = 45;     // ms between one picture rising and the next
+  const WAIT = 700;       // ms the strip holds the hero while a pair's pictures arrive, at most
   const GAP = 8;          // px between pictures, and between rows
   const APART = 24;       // px between one word's pictures and the next word's
 
@@ -34,6 +35,7 @@
 
   const root = document.documentElement;
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   /* --- the strip's height and state ---------------------------------------------------------- */
 
@@ -198,25 +200,49 @@
       img.decoding = 'async';
       img.draggable = false;
       img.dataset.folder = it.folder;
-      img.style.transitionDelay = calm ? '0ms' : `${120 + i * STAGGER}ms`;
       img.src = it.src;
-      img.decode().then(() => img.classList.add('in'), () => img.remove());   // never paints in halves
       track.append(img);
       return img;
     });
-    // once they have all risen, let later changes (a word's focus) happen without the stagger
-    setTimeout(() => reel.imgs.forEach(img => { img.style.transitionDelay = ''; }), 900 + pair.items.length * STAGGER);
+    // ready once every picture is decoded (or turned out to be missing), so none paints in halves;
+    // first once any one of them is
+    let first;
+    reel.first = new Promise(r => { first = r; });
+    reel.ready = Promise.all(reel.imgs.map(img => img.decode().then(() => {
+      img.decoded = true;
+      first();
+      if (reel.shown) img.classList.add('in');            // arrived after the others rose: straight into place
+    }, () => img.remove())));
+    reel.pair = pair;
     stage.append(reel);
     return reel;
   };
 
-  const place = (reel, pair) => {
-    const L = layout(pair);
+  // lay a reel out; its frame is only drawn once it is on show
+  const place = reel => {
+    const L = layout(reel.pair);
     reel.classList.toggle('pan', L.pan);
     reel.firstChild.style.width = L.track + 'px';
     L.boxes.forEach((b, i) => Object.assign(reel.imgs[i].style, { left: b.l + 'px', top: b.t + 'px', width: b.w + 'px', height: b.h + 'px' }));
-    clipTo({ ...L.clip, W: L.W, H: L.H });
+    reel.clip = { ...L.clip, W: L.W, H: L.H };
     reel.pan = L.pan;
+    if (reel.shown) clipTo(reel.clip);
+  };
+
+  // the hero closes in on the block, and the pictures that are ready rise one after another
+  const reveal = reel => {
+    reel.shown = true;
+    frame.classList.add('playing');
+    hero.classList.remove('on');
+    clipTo(reel.clip);
+    let k = 0;
+    for (const img of reel.imgs) {
+      if (!img.decoded) continue;
+      img.style.transitionDelay = calm ? '0ms' : `${80 + k++ * STAGGER}ms`;
+      img.classList.add('in');
+    }
+    // once they have risen, later changes (a word's spotlight) happen without the stagger
+    setTimeout(() => reel.imgs.forEach(img => { img.style.transitionDelay = ''; }), 900 + k * STAGGER);
   };
 
   const retire = reel => {
@@ -224,12 +250,15 @@
     setTimeout(() => reel.remove(), 300);
   };
 
+  // reel: the pictures on show. pending: the next pair's, laid out unseen while they arrive
+  let reel = null, pending = null, active = null;
+
   // the window, the strip or the column moved: put everything straight where it belongs, no animation
-  let reel = null, active = null;
   if ('ResizeObserver' in window) {
     new ResizeObserver(() => {
       stage.style.transition = 'none';
-      if (reel) place(reel, active); else clipTo(fullFrame());
+      if (pending) place(pending);
+      if (reel) place(reel); else clipTo(fullFrame());
       stage.getBoundingClientRect();
       stage.style.transition = '';
     }).observe(stage);
@@ -277,20 +306,32 @@
     setTimeout(() => { if (run === turn) frame.classList.remove('playing'); }, MORPH);   // the static runs until the hero is back
   };
 
+  // The words light at once. The strip waits for the pair's pictures, so they rise in order rather than
+  // pop in as they arrive. After WAIT it goes ahead with what it has, as long as that is at least one
+  // picture (the hero stays rather than leave an empty band), and the rest step in as they land.
   const enter = pair => {
     clearTimeout(lingering);
     if (active === pair) return;
-    turn++;
+    const run = ++turn;
     light(pair);
-    if (reel) retire(reel);
-    reel = null;
-    if (!pair.items.length) { toHero(); return; }
-    frame.classList.add('playing');
-    hero.classList.remove('on');
-    reel = build(pair);
-    place(reel, pair);
-    reel.getBoundingClientRect();                         // commit the pictures' starting state, so they rise
-    if (reel.pan && pointerX != null) { aimAt(pointerX); reel.scrollLeft = at = aim; }
+    if (pending) { pending.remove(); pending = null; }
+    if (!pair.items.length) {
+      if (reel) retire(reel);
+      reel = null;
+      toHero();
+      return;
+    }
+    const next = pending = build(pair);
+    place(next);
+    next.getBoundingClientRect();                         // commit the pictures' starting state, so they rise
+    Promise.race([next.ready, sleep(WAIT).then(() => next.first)]).then(() => {
+      if (run !== turn) return;
+      pending = null;
+      if (reel) retire(reel);
+      reel = next;
+      if (reel.pan && pointerX != null) { aimAt(pointerX); reel.scrollLeft = at = aim; }
+      reveal(reel);
+    });
   };
 
   const stop = () => {
@@ -298,6 +339,7 @@
     if (!active) return;
     turn++;
     light(null);
+    if (pending) { pending.remove(); pending = null; }
     if (reel) retire(reel);
     reel = null;
     toHero();
@@ -311,9 +353,30 @@
     for (const img of reel.imgs) img.classList.toggle('match', !!word && img.dataset.folder === word.dataset.pictures);
   };
 
-  // reaching a line starts its downloads, so the pictures are usually there by the time they are wanted
+  // Downloads. Once the bio is near, every picture is fetched quietly, three at a time, pair by pair,
+  // so hovering is as quick as it is on a local server. Reaching a line fetches its pair's straight away.
+  // Slow connections, and ones that ask to save data, only ever fetch what is hovered.
   const fetched = new Set();
-  const warm = pair => pair.items.forEach(it => { if (!fetched.has(it.src)) { fetched.add(it.src); new Image().src = it.src; } });
+  const fetchOne = (src, priority, done) => {
+    if (fetched.has(src)) return false;
+    fetched.add(src);
+    const img = new Image();
+    img.fetchPriority = priority;
+    if (done) img.onload = img.onerror = done;
+    img.src = src;
+    return true;
+  };
+  const warm = pair => pair.items.forEach(it => fetchOne(it.src, 'high'));
+  const prefetch = () => {
+    const c = navigator.connection;
+    if (c && (c.saveData || /2g|3g/.test(c.effectiveType || ''))) return;
+    const queue = pairs.flatMap(p => p.items.map(it => it.src));
+    let running = 0;
+    const next = () => {
+      while (running < 3 && queue.length) if (fetchOne(queue.shift(), 'low', () => { running--; next(); })) running++;
+    };
+    next();
+  };
 
   /* --- input --------------------------------------------------------------------------------- */
 
@@ -356,6 +419,14 @@
   });
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => { if (!e.isIntersecting) stop(); }).observe(bio);
+
+    // start the quiet downloads when the bio is within a screen of view, once the hero has loaded
+    const near = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      near.disconnect();
+      if (document.readyState === 'complete') prefetch(); else addEventListener('load', prefetch, { once: true });
+    }, { rootMargin: '100% 0px' });
+    near.observe(bio);
 
     // the first time the bio is read, its linked words light up once, top to bottom: there is something here
     const words = pairs.flatMap(p => p.words).sort(before);

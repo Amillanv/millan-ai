@@ -9,9 +9,12 @@ Drop pictures into a folder, named however you like, then run:
 For every picture it:
   - removes location, camera and other metadata (phone exports carry GPS coordinates), keeping the
     colour profile, after turning the pixels upright so dropping the orientation tag can't rotate it;
-  - shrinks anything longer than 2400px on its long side;
+  - shrinks anything taller than 1080px (or wider than 2160px) to fit, so the page loads quickly.
+    The strip never shows a picture taller than 420px, so 1080 stays sharp on a retina screen;
+    your originals stay in Photos;
   - warns when a picture is too small to stay sharp in the strip.
-Then it writes js/pictures-index.js: each folder's pictures in name order, with their sizes.
+Then it writes js/pictures-index.js, each folder's pictures in name order with their sizes, and
+re-stamps the pages' links to it (tools/stamp.py) so browsers fetch the new list.
 Empty folders are left out, so their words stay plain text until they have pictures.
 
 Needs Pillow:  python3 -m pip install Pillow
@@ -31,7 +34,9 @@ ROOT = Path(__file__).resolve().parent.parent
 PICTURES = ROOT / 'img' / 'pictures'
 INDEX = ROOT / 'js' / 'pictures-index.js'
 TYPES = {'.jpg', '.jpeg', '.png', '.webp'}
-LONGEST = 2400     # px on the long side; more than the strip ever shows
+TALLEST = 1080     # px; the strip is at most 420px tall, so this is sharp at 2x with room to spare
+WIDEST = 2160      # px; for panoramas
+QUALITY = 85       # when a picture has to be re-encoded
 SHARP = 720        # px tall; below this a picture goes soft in a tall strip on a retina screen
 
 
@@ -39,7 +44,7 @@ def tidy(path):
     """Strip metadata from one picture in place, if it has any. Returns (width, height, changed)."""
     with Image.open(path) as im:
         has_meta = bool(im.getexif()) or any(k in im.info for k in ('exif', 'xmp', 'XML:com.adobe.xmp', 'comment'))
-        too_big = max(im.size) > LONGEST
+        too_big = im.height > TALLEST or im.width > WIDEST
         if not has_meta and not too_big:
             return (*im.size, False)
 
@@ -52,9 +57,10 @@ def tidy(path):
         else:
             out = ImageOps.exif_transpose(im)
             if too_big:
-                out.thumbnail((LONGEST, LONGEST), Image.LANCZOS)
+                out.thumbnail((WIDEST, TALLEST), Image.LANCZOS)
             if fmt == 'JPEG':
-                out, options['quality'] = out.convert('RGB'), 92
+                out = out.convert('RGB')
+                options.update(quality=QUALITY, optimize=True, progressive=True)
 
         fd, tmp = tempfile.mkstemp(suffix=path.suffix, dir=path.parent)
         os.close(fd)
@@ -82,7 +88,7 @@ def main():
             w, h, changed = tidy(f)
             if changed:
                 notes.append(f'cleaned {f.relative_to(ROOT)}')
-            if min(w, h) < SHARP:
+            if h < SHARP:
                 notes.append(f'small   {f.relative_to(ROOT)} is {w}x{h}; it will look soft. Export it at full size.')
             entries.append([f.name, w, h])
         if entries:
@@ -101,7 +107,13 @@ def main():
     for note in notes:
         print(note)
     total = sum(len(e) for e in sets.values())
-    print(f'{total} pictures behind {len(sets)} words: {", ".join(f"{w} {len(e)}" for w, e in sets.items())}')
+    weight = sum((PICTURES / w / e[0]).stat().st_size for w, es in sets.items() for e in es) / 1e6
+    print(f'{total} pictures behind {len(sets)} words, {weight:.1f} MB: {", ".join(f"{w} {len(e)}" for w, e in sets.items())}')
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    sys.dont_write_bytecode = True
+    import stamp
+    stamp.main()
 
 
 if __name__ == '__main__':
