@@ -1,0 +1,10 @@
+/* TEAM */
+  Alan Millan
+  Site: https://millan.ai
+
+/* SITE */
+  Last update: 2026-11-16
+  Standards: HTML, CSS, JavaScript
+  Tools: a text editor
+  Typeface: your system's Helvetica
+  The static is visual snow.

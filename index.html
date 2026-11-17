@@ -1,155 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--
+  millan.ai
+
+  No framework, no build step. Written by hand.
+  The static behind the page is visual snow. It is how I see the world.
+  Source: https://github.com/Amillanv/millan-ai
+-->
+<html lang="en" class="home">
 
 <head>
-    <!-- Meta Tags for SEO -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alan Millan</title>
+  <meta name="description" content="What’s a better driver than fear? Alan Millan builds Pointer Health, which tells you what your dog is likely to get sick from, years before it happens.">
+  <meta name="author" content="Alan Millan">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="canonical" href="https://millan.ai/">
 
-    <meta name="description"
-        content="Alan Millan – AI Researcher & Founder | Advancing Causal AI for Medicine & Health Tech">
-    <meta name="keywords"
-        content="Causal AI, AI in Healthcare, Precision Medicine, AI Research, Machine Learning, Alan Millan, Causal Inference">
-    <meta name="author" content="Alan Millan">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://millan.ai/">
+  <meta property="og:title" content="Alan Millan">
+  <meta property="og:description" content="What’s a better driver than fear? Alan Millan builds Pointer Health, which tells you what your dog is likely to get sick from, years before it happens.">
+  <meta property="og:image" content="https://millan.ai/img/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Alan crouched in a shallow stream, looking up at the camera. Film photograph.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@AlanMillanViv">
+  <meta name="twitter:title" content="Alan Millan">
+  <meta name="twitter:description" content="What’s a better driver than fear? Builds Pointer Health: what your dog is likely to get sick from, years before it happens.">
+  <meta name="twitter:image" content="https://millan.ai/img/og.jpg">
 
-    <!-- Open Graph (OG) Tags for Social Media Previews -->
-    <meta property="og:title" content="Alan Millan – Causal AI for Healthcare">
-    <meta property="og:description"
-        content="AI today predicts. I make it understand. Exploring Causal AI for real-world medical impact.">
-    <meta property="og:image" content="https://millan.ai/img/icon.png"> <!-- Change to actual image URL -->
-    <meta property="og:url" content="https://millan.ai">
-    <meta property="og:type" content="website">
+  <link rel="icon" href="img/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="author" href="humans.txt">
+  <link rel="stylesheet" href="css/styles.css">
 
-    <!-- Twitter Card for Better Sharing -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Alan Millan – Causal AI for Healthcare">
-    <meta name="twitter:description" content="Founder & AI Researcher | Building the future of AI-driven medicine.">
-    <meta name="twitter:image" content="https://millan.ai/img/icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Alan Millan",
+    "url": "https://millan.ai/",
+    "image": "https://millan.ai/img/og.jpg",
+    "jobTitle": "Founder",
+    "worksFor": { "@type": "Organization", "name": "Pointer Health", "url": "https://pointerhealth.com" },
+    "description": "Founder of Pointer Health, which tells you what your dog is likely to get sick from, years before it happens.",
+    "sameAs": [
+      "https://github.com/Amillanv",
+      "https://www.linkedin.com/in/amillanv",
+      "https://twitter.com/AlanMillanViv",
+      "https://www.instagram.com/alan.millan.v"
+    ]
+  }
+  </script>
 
-    <!-- Favicon -->
-    <link rel="icon" href="img/icon.png" type="image/x-icon">
-
-    <!-- Canonical Tag (Prevents Duplicate Content Issues) -->
-    <link rel="canonical" href="https://millan.ai">
-
-    <meta name="robots" content="index, follow">
-
-    <!-- Title for Search Engines & Browsers -->
-    <title>Alan Millan – Causal AI & Precision Medicine</title>
-
-    <!-- Stylesheet -->
-    <link rel="preload" href="css/styles.css" as="style">
-    <link rel="stylesheet" href="css/styles.css">
-
-    <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "Person",
-          "name": "Alan Millan",
-          "url": "https://millan.ai",
-          "sameAs": [
-            "https://www.linkedin.com/in/amillanv",
-            "https://twitter.com/AlanMillanViv",
-            "https://www.instagram.com/alan.millan.v"
-          ],
-          "jobTitle": "AI Researcher & Founder",
-          "worksFor": {
-            "@type": "Organization",
-            "name": "Millan AI"
-          },
-          "description": "Founder & AI Researcher developing Causal AI for Precision Medicine. Transforming healthcare through explainable AI."
-        }
-    </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7H4XW6ZTTQ"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-7H4XW6ZTTQ');
-    </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7H4XW6ZTTQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-7H4XW6ZTTQ');
+  </script>
 </head>
 
 <body>
-    <canvas id="staticCanvas"></canvas>
-    <header>
-        <h1>Alan Millan</h1>
-        <h2 class="intro">FOUNDER AND ENGINEER FOCUSED ON CAUSAL DISCOVERY IN HEALTHCARE. <br>SHIFTING MEDICINE FROM
-            PROLONGING ILLNESS TO ERADICATING IT ALTOGETHER.</h2>
+  <canvas id="static" aria-hidden="true"></canvas>
+  <header class="site-header">
+    <h1>Alan Millan</h1>
+    <nav class="label" aria-label="Site">
+      <!-- <a href="reflections.html">Reflections</a> -->
+      <a href="https://mqpncx10wd9.typeform.com/to/SwXdPhZ4" target="_blank" rel="noopener noreferrer">Reach out</a>
+    </nav>
+  </header>
 
-        <nav>
-            <a href="https://millan.ai/reflections.html">REFLECTIONS</a>
-            <a id="contact-btn" href="https://mqpncx10wd9.typeform.com/to/SwXdPhZ4" target="_blank"
-                rel="noopener noreferrer">REACH OUT</a>
-        </nav>
-    </header>
+  <main>
+    <section id="landing" aria-label="Landing">
+      <p class="intro label">Dogs. Drugs. Data. DNA.</p>
+    </section>
 
-    <main>
-        <section id="landing">
-            <img class="profile" src="img/profile.png" alt="">
-            <div class="sub-title">
-                <div class="sub-item">FROM REACTIVE TO PROACTIVE</div>
-                <div class="sub-item">FROM TREATMENT TO CURE</div>
-            </div>
-        </section>
-        <section id="about">
-            <div class="section-content">
-                <p class="section-text">I have dedicated my life to precision medicine—spanning genetics,
-                    tissue engineering, and pharmaceutical precision drug development. I build technology that moves medicine from reactive to truly predictive.<br>
-                    <br>
-                    <br>
-                    <br>
+    <!-- The strip. It sits at the foot of the landing, then pins under the name while the bio is read.
+         Hovering a line of the bio shows, here, every picture behind it and its partner line. -->
+    <div class="photo" id="photo">
+      <canvas id="static-photo" aria-hidden="true"></canvas>
+      <div class="photo-stage">
+        <img class="photo-hero on"
+             src="img/profile-2400.jpg"
+             srcset="img/profile-1200.jpg 1200w, img/profile-2400.jpg 2400w"
+             sizes="100vw" width="2400" height="1628" fetchpriority="high"
+             alt="Alan crouched in a shallow stream, looking up at the camera. Film photograph.">
+      </div>
+    </div>
 
-                    The result is <span><a href="https://pointerhealth.com">Pointer Health</a></span>: the first predictive screening system for dogs that maps disease risk years before symptoms appear.
-                </p>
+    <!-- <div class="creed">
+      <p>Understand what exists</p>
+      <p>Build what doesn’t</p>
+    </div> -->
 
-            </div>
-            <div class="socials">
-                <a href="https://www.linkedin.com/in/amillanv" target="_blank" class="section-text social">LINKEDIN</a>
-                <a href="https://twitter.com/AlanMillanViv" target="_blank" class="section-text social">X</a>
-                <a href="https://www.instagram.com/alan.millan.v" target="_blank"
-                    class="section-text social">INSTAGRAM</a>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <div class="sub-title">
-            <div class="sub-item copyright">&copy; 2025 Alan Millan. All Rights Reserved.</div>
+    <section id="about">
+      <h2 class="visually-hidden">About</h2>
+      <div class="bio">
+        <div class="stanza">
+          <!-- <p>I know very little, and that scares me.</p> -->
+          <p>I’m terrified of my life without Annalise.</p>
+          <p>I struggle to make sense of a world so far from nature.</p>
+          <p>I’d rather die than lose my senses.</p>
+          <p>I’m afraid of power without responsibility.</p>
         </div>
-    </footer>
-    <script>
-        const canvas = document.getElementById("staticCanvas");
-        const ctx = canvas.getContext("2d");
+        <p class="stanza">Do I complain about it? Of course. When I’m not:</p>
+        <div class="stanza">
+          <!-- <p>I'm learning things I may never use</p> -->
+          <p>I’m building <a href="https://pointerhealth.com">Pointer Health</a>.</p>
+          <p>I’m working in conservation, and spending as much time in wilderness as I can.</p>
+          <p>I’m in the kitchen using all 5 senses.</p>
+          <p>I’m finding people who know what I don’t, who care about what they do,</p>
+          <p>and who aren’t afraid to tell me I’m wrong.</p>
+        </div>
+        <p class="coda">Biology is becoming something we can write to. What we do with it will outlive us. I want to build what comes next, with people who care about getting it right.</p>
+      </div>
+      <nav class="socials" aria-label="Elsewhere">
+        <a class="label" href="https://github.com/Amillanv" target="_blank" rel="noopener">GitHub</a>
+        <a class="label" href="https://www.linkedin.com/in/amillanv" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="label" href="https://twitter.com/AlanMillanViv" target="_blank" rel="noopener">X</a>
+        <a class="label" href="https://www.instagram.com/alan.millan.v" target="_blank" rel="noopener">Instagram</a>
+      </nav>
+    </section>
+  </main>
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+  <footer class="site-footer label">
+    <p>© 2026 Alan Millan</p>
+    <p>Updated <time datetime="2026-11-16">Nov 2026</time></p>
+  </footer>
 
-        function generateStatic() {
-            const imageData = ctx.createImageData(canvas.width, canvas.height);
-            const buffer = imageData.data;
-
-            for (let i = 0; i < buffer.length; i += 4) {
-                const color = Math.random() * 24; // Random grayscale value
-                buffer[i] = color;      // R
-                buffer[i + 1] = color;  // G
-                buffer[i + 2] = color;  // B
-                buffer[i + 3] = 255;    // Alpha
-            }
-
-            ctx.putImageData(imageData, 0, 0);
-        }
-
-        function animateStatic() {
-            generateStatic();
-            requestAnimationFrame(animateStatic);
-        }
-
-        window.addEventListener("resize", resizeCanvas);
-        resizeCanvas();
-        animateStatic();
-    </script>
+  <script src="js/static.js"></script>
+  <script src="js/pictures-index.js"></script>
+  <script src="js/pictures.js"></script>
 </body>
 
 </html>
